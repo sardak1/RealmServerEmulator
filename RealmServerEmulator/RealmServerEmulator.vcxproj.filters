@@ -2,5 +2,51 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="RealmServerEmulator.cpp" />
+    <ClCompile Include="protocol\encryption\encryption_state.cpp">
+      <Filter>protocol\encryption</Filter>
+    </ClCompile>
+    <ClCompile Include="protocol\encryption\packet_encryption.cpp">
+      <Filter>protocol\encryption</Filter>
+    </ClCompile>
+    <ClCompile Include="network\buffer.cpp">
+      <Filter>network</Filter>
+    </ClCompile>
+    <ClCompile Include="protocol\encryption\encryption_algorithm.cpp">
+      <Filter>protocol\encryption</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="network">
+      <UniqueIdentifier>{96518db6-9aca-4437-a50e-322aa3d120b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="protocol">
+      <UniqueIdentifier>{079751ee-6212-4108-9f1f-0a54a2863359}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="serialize">
+      <UniqueIdentifier>{d10e2dba-c3a5-4f00-afd1-ee104a40eb47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="data">
+      <UniqueIdentifier>{ef79096e-0b34-494d-a352-4caf9339ebc1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="protocol\encryption">
+      <UniqueIdentifier>{6ba35cd5-08a9-4b00-931c-9c7c57b9644b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="protocol\packet_type.h">
+      <Filter>protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="protocol\encryption\encryption_state.h">
+      <Filter>protocol\encryption</Filter>
+    </ClInclude>
+    <ClInclude Include="protocol\encryption\packet_encryption.h">
+      <Filter>protocol\encryption</Filter>
+    </ClInclude>
+    <ClInclude Include="network\buffer.h">
+      <Filter>network</Filter>
+    </ClInclude>
+    <ClInclude Include="protocol\encryption\encryption_algorithm.h">
+      <Filter>protocol\encryption</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
