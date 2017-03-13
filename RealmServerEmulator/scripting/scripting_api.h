@@ -1,4 +1,4 @@
-// Copyright 2017 Sardak Software
+// Copyright 2017 Sardak Software, All Rights Reserved
 
 #ifndef REALMSERVEREMULATOR_SCRIPTING_SCRIPTING_API_H_
 #define REALMSERVEREMULATOR_SCRIPTING_SCRIPTING_API_H_

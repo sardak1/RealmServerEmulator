@@ -1,4 +1,4 @@
-// Copyright 2017 Sardak Software
+// Copyright 2017 Sardak Software, All Rights Reserved
 
 #include <iostream>
 #include "scripting/lua_log.h"

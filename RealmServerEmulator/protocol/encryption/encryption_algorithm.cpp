@@ -1,4 +1,4 @@
-// Copyright 2017 Sardak Software
+// Copyright 2017 Sardak Software, All Rights Reserved
 
 #include "protocol/encryption/encryption_algorithm.h"
 

@@ -1,4 +1,4 @@
-// Copyright 2017 Sardak Software
+// Copyright 2017 Sardak Software, All Rights Reserved
 
 #ifndef REALMSERVEREMULATOR_NETWORK_SOCKETS_H_
 #define REALMSERVEREMULATOR_NETWORK_SOCKETS_H_

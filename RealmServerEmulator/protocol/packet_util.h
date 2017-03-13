@@ -1,4 +1,4 @@
-// Copyright 2017 Sardak Software
+// Copyright 2017 Sardak Software, All Rights Reserved
 
 #ifndef REALMSERVEREMULATOR_PROTOCOL_PACKET_UTIL_H_
 #define REALMSERVEREMULATOR_PROTOCOL_PACKET_UTIL_H_
