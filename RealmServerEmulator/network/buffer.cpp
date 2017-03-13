@@ -47,3 +47,10 @@ void network::Buffer::grow(uint32_t desired_size)
         data_ = std::move(new_data);
     }
 }
+
+void network::Buffer::write_bytes(const void* data, size_t size)
+{
+    grow(size_ + size);
+    std::memcpy(data_.get() + size_, data, size);
+    advance(size);
+}

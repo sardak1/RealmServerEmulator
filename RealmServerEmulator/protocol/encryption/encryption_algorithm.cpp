@@ -67,7 +67,7 @@ namespace
                          const protocol::EncryptionState::SubState* substate, network::Buffer* buffer)
     {
         buffer->grow(buffer->size() + size);
-        uint8_t* data = buffer->data();
+        uint8_t* data = buffer->data() + buffer->size();
 
         std::memcpy(data, algorithm, size);
 
@@ -84,7 +84,7 @@ namespace
 
 void protocol::write_decryption_algorithm(const protocol::EncryptionState* state, network::Buffer* buffer)
 {
-    write_algorithm(DECRYPTION_ALGORITHM, sizeof(DECRYPTION_ALGORITHM), 0x5c, &state->encryption, buffer);
+    write_algorithm(DECRYPTION_ALGORITHM, sizeof(DECRYPTION_ALGORITHM), 0x5c, &state->decryption, buffer);
 }
 
 void protocol::write_encryption_algorithm(const protocol::EncryptionState* state, network::Buffer* buffer)

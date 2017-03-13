@@ -12,8 +12,10 @@ namespace
 
     void init_substate(protocol::EncryptionState::SubState* substate)
     {
-        substate->key = protocol::create_random_bytes(4);
-        substate->multiplier = 0x10000 | protocol::create_random_bytes(2);
+        //substate->key = protocol::create_random_bytes(4);
+        //substate->multiplier = 0x10000 | protocol::create_random_bytes(2);
+        substate->key = 0;
+        substate->multiplier = 1;
     }
 
 }  // namespace

@@ -92,6 +92,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
+      <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -140,17 +141,26 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="network\buffer.cpp" />
+    <ClCompile Include="network\client.cpp" />
+    <ClCompile Include="network\sockets.cpp" />
     <ClCompile Include="protocol\encryption\encryption_algorithm.cpp" />
     <ClCompile Include="protocol\encryption\encryption_state.cpp" />
     <ClCompile Include="protocol\encryption\packet_encryption.cpp" />
+    <ClCompile Include="protocol\packet_util.cpp" />
     <ClCompile Include="RealmServerEmulator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="network\buffer.h" />
+    <ClInclude Include="network\client.h" />
+    <ClInclude Include="network\sockets.h" />
+    <ClInclude Include="protocol\ack.h" />
     <ClInclude Include="protocol\encryption\encryption_algorithm.h" />
     <ClInclude Include="protocol\encryption\encryption_state.h" />
     <ClInclude Include="protocol\encryption\packet_encryption.h" />
+    <ClInclude Include="protocol\net_message.h" />
     <ClInclude Include="protocol\packet_type.h" />
+    <ClInclude Include="protocol\packet_util.h" />
+    <ClInclude Include="serialize\json.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

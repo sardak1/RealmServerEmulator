@@ -14,6 +14,15 @@
     <ClCompile Include="protocol\encryption\encryption_algorithm.cpp">
       <Filter>protocol\encryption</Filter>
     </ClCompile>
+    <ClCompile Include="network\sockets.cpp">
+      <Filter>network</Filter>
+    </ClCompile>
+    <ClCompile Include="network\client.cpp">
+      <Filter>network</Filter>
+    </ClCompile>
+    <ClCompile Include="protocol\packet_util.cpp">
+      <Filter>protocol</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="network">
@@ -47,6 +56,24 @@
     </ClInclude>
     <ClInclude Include="protocol\encryption\encryption_algorithm.h">
       <Filter>protocol\encryption</Filter>
+    </ClInclude>
+    <ClInclude Include="network\sockets.h">
+      <Filter>network</Filter>
+    </ClInclude>
+    <ClInclude Include="network\client.h">
+      <Filter>network</Filter>
+    </ClInclude>
+    <ClInclude Include="serialize\json.h">
+      <Filter>serialize</Filter>
+    </ClInclude>
+    <ClInclude Include="protocol\ack.h">
+      <Filter>protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="protocol\net_message.h">
+      <Filter>protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="protocol\packet_util.h">
+      <Filter>protocol</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -34,17 +34,17 @@ void protocol::encrypt_packet(protocol::EncryptionState* state, void* packet)
     uint32_t* words = reinterpret_cast<uint32_t*>(packet);
     auto& substate = state->encryption;
     auto word_count = words[0] >> 2;
-    uint32_t checksum = 0;
+    uint32_t checksum = (substate.key * substate.multiplier) + 1;
 
     for (uint32_t index = 1; index <= word_count; index++)
     {
+        checksum ^= words[index];
+
         if (index < 5)
         {
             advance_key(&substate);
             words[index] ^= substate.key;
         }
-
-        checksum ^= words[index];
     }
 
     words[word_count + 1] = checksum;
