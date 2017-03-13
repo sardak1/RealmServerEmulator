@@ -12,6 +12,7 @@
 #include "protocol/encryption/packet_encryption.h"
 #include "protocol/packet_util.h"
 #include "protocol/ack.h"
+#include "scripting/scripting_api.h"
 
 #ifdef WIN32
 #include <conio.h>
@@ -29,7 +30,13 @@ int main()
     auto config = load_config("config.json");
     std::vector<std::shared_ptr<network::Client>> clients;
 
+    std::cout << "Starting server " << config["name"].get<std::string>() << std::endl;
+
     network::init_sockets();
+
+    std::cout << "Initializing scripting environment" << std::endl;
+    auto lua = scripting::create_environment();
+    scripting::load_script(lua, "scripts/realm.lua");
 
     auto listen_socket = start_listening(config["port"].get<uint16_t>());
 
@@ -59,6 +66,9 @@ int main()
 
         std::cout << "Closing server socket" << std::endl;
         ::closesocket(listen_socket);
+
+        std::cout << "Closing scripting environment" << std::endl;
+        lua_close(lua);
     }
 
     network::shutdown_sockets();
@@ -94,37 +104,37 @@ network::Socket start_listening(uint16_t port)
     address.sin_port = htons(port);
     address.sin_addr.S_un.S_addr = INADDR_ANY;
 
-auto listen_socket = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    auto listen_socket = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
-if (INVALID_SOCKET == listen_socket)
-{
-    std::cerr << "Failed to create server socket." << std::endl;
-    return INVALID_SOCKET;
-}
+    if (INVALID_SOCKET == listen_socket)
+    {
+        std::cerr << "Failed to create server socket." << std::endl;
+        return INVALID_SOCKET;
+    }
 
-int result = ::bind(listen_socket, reinterpret_cast<struct sockaddr*>(&address), sizeof(sockaddr_in));
+    int result = ::bind(listen_socket, reinterpret_cast<struct sockaddr*>(&address), sizeof(sockaddr_in));
 
-if (SOCKET_ERROR == result)
-{
-    ::closesocket(listen_socket);
-    std::cerr << "Failed to bind server socket." << std::endl;
-    return INVALID_SOCKET;
-}
+    if (SOCKET_ERROR == result)
+    {
+        ::closesocket(listen_socket);
+        std::cerr << "Failed to bind server socket." << std::endl;
+        return INVALID_SOCKET;
+    }
 
-result = ::listen(listen_socket, SOMAXCONN);
+    result = ::listen(listen_socket, SOMAXCONN);
 
-if (SOCKET_ERROR == result)
-{
-    ::closesocket(listen_socket);
-    std::cerr << "Failed to listen on server socket." << std::endl;
-    return INVALID_SOCKET;
-}
+    if (SOCKET_ERROR == result)
+    {
+        ::closesocket(listen_socket);
+        std::cerr << "Failed to listen on server socket." << std::endl;
+        return INVALID_SOCKET;
+    }
 
-disable_tcp_delay(listen_socket);
+    disable_tcp_delay(listen_socket);
 
-std::cout << "Now listening on port " << port << std::endl;
+    std::cout << "Now listening on port " << port << std::endl;
 
-return listen_socket;
+    return listen_socket;
 }
 
 bool do_select(fd_set* read, fd_set* write, fd_set* except, int num_fd)
@@ -218,6 +228,12 @@ void update_clients(std::vector<std::shared_ptr<network::Client>>& clients)
             }
         }
     }
+
+    clients.erase(std::remove_if(
+        clients.begin(),
+        clients.end(),
+        [](std::shared_ptr<network::Client> client) { return !client->is_connected(); }
+    ), clients.end());
 }
 
 void handle_packet(std::shared_ptr<network::Client> client)
