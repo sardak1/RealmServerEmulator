@@ -75,10 +75,10 @@ void network::Client::send_bytes()
     }
 }
 
-void network::Client::send(protocol::NetMessage* message)
+void network::Client::send(protocol::NetMessage* message, lua_State* lua)
 {
     auto offset = send_buffer_.size();
-    send_buffer_.grow(offset + 8);
+    send_buffer_.grow(offset + 16);
 
     auto data = reinterpret_cast<uint32_t*>(send_buffer_.data() + offset);
     data[1] = static_cast<uint32_t>(message->type());
@@ -86,7 +86,7 @@ void network::Client::send(protocol::NetMessage* message)
     data[3] = 0;
     send_buffer_.advance(16);
 
-    message->serialize(&send_buffer_);
+    message->serialize(lua, send_buffer_);
 
     auto payload_size = send_buffer_.size() - offset - 4;
     payload_size += (4 - (payload_size & 3)) & 3;

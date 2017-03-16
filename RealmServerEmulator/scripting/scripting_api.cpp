@@ -4,6 +4,7 @@
 #include <iostream>
 #include "scripting/scripting_api.h"
 #include "scripting/lua_log.h"
+#include "scripting/lua_server.h"
 
 namespace
 {
@@ -42,26 +43,36 @@ namespace
     {
         lua_newtable(lua);
 
-        lua_pushstring(lua, "info");
         lua_pushcclosure(lua, &scripting::lua_log_info, 0);
-        lua_settable(lua, -3);
+        lua_setfield(lua, -2, "info");
 
-        lua_pushstring(lua, "error");
         lua_pushcclosure(lua, &scripting::lua_log_error, 0);
-        lua_settable(lua, -3);
+        lua_setfield(lua, -2, "error");
 
         lua_setglobal(lua, "Log");
     }
 
+    void register_server_functions(lua_State* lua, ServerState* state)
+    {
+        lua_newtable(lua);
+
+        lua_pushlightuserdata(lua, state);
+        lua_pushcclosure(lua, &scripting::lua_server_send_message, 1);
+        lua_setfield(lua, -2, "send_message");
+
+        lua_setglobal(lua, "Server");
+    }
+
 }  // namespace
 
-lua_State* scripting::create_environment()
+lua_State* scripting::create_environment(ServerState* state)
 {
     auto lua = luaL_newstate();
     luaL_openlibs(lua);
 
     add_search_path(lua, "scripts/?.lua");
     register_log_functions(lua);
+    register_server_functions(lua, state);
 
     return lua;
 }

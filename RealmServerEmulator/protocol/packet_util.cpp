@@ -3,7 +3,6 @@
 #include <iostream>
 #include <iomanip>
 #include "protocol/packet_util.h"
-#include "protocol/packet_type.h"
 
 void protocol::log_packet(const void* packet)
 {

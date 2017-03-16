@@ -1,3 +1,4 @@
 -- Main entry point for the application scripts
 
-Log.info("Hello world!")
+require 'tools/table_tools'
+require 'players'

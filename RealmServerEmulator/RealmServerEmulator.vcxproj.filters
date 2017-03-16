@@ -128,6 +128,18 @@
     <ClCompile Include="lua\lzio.c">
       <Filter>lua</Filter>
     </ClCompile>
+    <ClCompile Include="protocol\protocol.cpp">
+      <Filter>protocol</Filter>
+    </ClCompile>
+    <ClCompile Include="protocol\net_message.cpp">
+      <Filter>protocol</Filter>
+    </ClCompile>
+    <ClCompile Include="protocol\net_message_serializer.cpp">
+      <Filter>protocol</Filter>
+    </ClCompile>
+    <ClCompile Include="scripting\lua_server.cpp">
+      <Filter>scripting</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="network">
@@ -153,9 +165,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="protocol\packet_type.h">
-      <Filter>protocol</Filter>
-    </ClInclude>
     <ClInclude Include="protocol\encryption\encryption_state.h">
       <Filter>protocol\encryption</Filter>
     </ClInclude>
@@ -176,9 +185,6 @@
     </ClInclude>
     <ClInclude Include="serialize\json.h">
       <Filter>serialize</Filter>
-    </ClInclude>
-    <ClInclude Include="protocol\ack.h">
-      <Filter>protocol</Filter>
     </ClInclude>
     <ClInclude Include="protocol\net_message.h">
       <Filter>protocol</Filter>
@@ -273,5 +279,18 @@
     <ClInclude Include="lua\lzio.h">
       <Filter>lua</Filter>
     </ClInclude>
+    <ClInclude Include="protocol\protocol.h">
+      <Filter>protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="protocol\net_message_serializer.h">
+      <Filter>protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="protocol\message_set.h">
+      <Filter>protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="scripting\lua_server.h">
+      <Filter>scripting</Filter>
+    </ClInclude>
+    <ClInclude Include="server_state.h" />
   </ItemGroup>
 </Project>

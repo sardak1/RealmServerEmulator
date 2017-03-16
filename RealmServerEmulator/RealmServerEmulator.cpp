@@ -11,32 +11,34 @@
 #include "protocol/encryption/encryption_algorithm.h"
 #include "protocol/encryption/packet_encryption.h"
 #include "protocol/packet_util.h"
-#include "protocol/ack.h"
 #include "scripting/scripting_api.h"
+#include "server_state.h"
 
 #ifdef WIN32
 #include <conio.h>
 #endif
 
-nlohmann::json load_config(const char* filename);
+nlohmann::json load_json_file(const char* filename);
 network::Socket start_listening(uint16_t port);
-void accept_connection(network::Socket listen_socket, std::vector<std::shared_ptr<network::Client>>& clients);
-void update_clients(std::vector<std::shared_ptr<network::Client>>& clients);
+void accept_connection(network::Socket listen_socket, ServerState* state);
+void update_clients(ServerState* state);
 void handle_packet(std::shared_ptr<network::Client> client);
 void disable_tcp_delay(network::Socket socket);
 
 int main()
 {
-    auto config = load_config("config.json");
-    std::vector<std::shared_ptr<network::Client>> clients;
+    auto config = load_json_file("config.json");
+    std::unique_ptr<ServerState> state(new ServerState());
+
+    state->protocol.reset(new protocol::Protocol(load_json_file("data/packet_type.json"), load_json_file("data/protocol.json")));
 
     std::cout << "Starting server " << config["name"].get<std::string>() << std::endl;
 
     network::init_sockets();
 
     std::cout << "Initializing scripting environment" << std::endl;
-    auto lua = scripting::create_environment();
-    scripting::load_script(lua, "scripts/realm.lua");
+    state->lua = scripting::create_environment(state.get());
+    scripting::load_script(state->lua, "scripts/realm.lua");
 
     auto listen_socket = start_listening(config["port"].get<uint16_t>());
 
@@ -56,19 +58,19 @@ int main()
             }
 #endif
 
-            accept_connection(listen_socket, clients);
-            update_clients(clients);
+            accept_connection(listen_socket, state.get());
+            update_clients(state.get());
 
             std::this_thread::yield();
         }
 
-        clients.clear();
+        state->clients.clear();
 
         std::cout << "Closing server socket" << std::endl;
         ::closesocket(listen_socket);
 
         std::cout << "Closing scripting environment" << std::endl;
-        lua_close(lua);
+        lua_close(state->lua);
     }
 
     network::shutdown_sockets();
@@ -76,24 +78,24 @@ int main()
     return 0;
 }
 
-nlohmann::json load_config(const char* filename)
+nlohmann::json load_json_file(const char* filename)
 {
-    std::ifstream config_file;
-    nlohmann::json config;
+    std::ifstream data_file;
+    nlohmann::json data;
 
-    config_file.open(filename, std::ifstream::in);
+    data_file.open(filename, std::ifstream::in);
 
-    if (config_file.is_open())
+    if (data_file.is_open())
     {
-        config << config_file;
-        config_file.close();
+        data << data_file;
+        data_file.close();
     }
     else
     {
-        std::cerr << "Could not open config file at: " << filename << std::endl;
+        std::cerr << "Could not open json file at: " << filename << std::endl;
     }
 
-    return config;
+    return data;
 }
 
 network::Socket start_listening(uint16_t port)
@@ -144,7 +146,7 @@ bool do_select(fd_set* read, fd_set* write, fd_set* except, int num_fd)
     return ::select(num_fd, read, write, except, &timeout) > 0;
 }
 
-void accept_connection(network::Socket listen_socket, std::vector<std::shared_ptr<network::Client>>& clients)
+void accept_connection(network::Socket listen_socket, ServerState* state)
 {
     static fd_set read;
 
@@ -164,14 +166,15 @@ void accept_connection(network::Socket listen_socket, std::vector<std::shared_pt
         protocol::write_decryption_algorithm(client->encryption_state(), client->send_buffer());
         protocol::write_encryption_algorithm(client->encryption_state(), client->send_buffer());
 
-        protocol::Ack ack(protocol::PacketType::kConnect);
-        client->send(&ack);
+        state->clients.push_back(client);
 
-        clients.push_back(client);
+        lua_getglobal(state->lua, "add_player_to_game");
+        lua_pushlightuserdata(state->lua, client.get());
+        scripting::safe_call(state->lua, 1, 0);
     }
 }
 
-void update_clients(std::vector<std::shared_ptr<network::Client>>& clients)
+void update_clients(ServerState* state)
 {
     static fd_set read, write, except;
 
@@ -182,7 +185,7 @@ void update_clients(std::vector<std::shared_ptr<network::Client>>& clients)
     network::Socket socket;
     int num_fds = 0;
 
-    for (auto client : clients)
+    for (auto client : state->clients)
     {
         if (client->is_connected())
         {
@@ -202,7 +205,7 @@ void update_clients(std::vector<std::shared_ptr<network::Client>>& clients)
 
     if (do_select(&read, &write, &except, num_fds))
     {
-        for (auto client : clients)
+        for (auto client : state->clients)
         {
             socket = client->socket();
 
@@ -229,11 +232,21 @@ void update_clients(std::vector<std::shared_ptr<network::Client>>& clients)
         }
     }
 
-    clients.erase(std::remove_if(
-        clients.begin(),
-        clients.end(),
+    for (auto client : state->clients)
+    {
+        if (!client->is_connected())
+        {
+            lua_getglobal(state->lua, "remove_player_from_game");
+            lua_pushlightuserdata(state->lua, client.get());
+            scripting::safe_call(state->lua, 1, 0);
+        }
+    }
+
+    state->clients.erase(std::remove_if(
+        state->clients.begin(),
+        state->clients.end(),
         [](std::shared_ptr<network::Client> client) { return !client->is_connected(); }
-    ), clients.end());
+    ), state->clients.end());
 }
 
 void handle_packet(std::shared_ptr<network::Client> client)

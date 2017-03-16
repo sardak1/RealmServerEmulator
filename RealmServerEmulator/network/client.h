@@ -8,6 +8,7 @@
 #include "network/buffer.h"
 #include "protocol/encryption/encryption_state.h"
 #include "protocol/net_message.h"
+#include "scripting/lua_include.h"
 
 namespace network
 {
@@ -25,7 +26,7 @@ namespace network
         void receive_bytes();
         void send_bytes();
 
-        void send(protocol::NetMessage* message);
+        void send(protocol::NetMessage* message, lua_State* lua);
         void disconnect();
 
         bool is_connected() const { return INVALID_SOCKET != socket_; }

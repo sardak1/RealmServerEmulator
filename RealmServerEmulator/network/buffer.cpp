@@ -54,3 +54,9 @@ void network::Buffer::write_bytes(const void* data, size_t size)
     std::memcpy(data_.get() + size_, data, size);
     advance(size);
 }
+
+void network::Buffer::read_bytes(void* data, size_t size)
+{
+    std::memcpy(data, data_.get() + size_, size);
+    advance(size);
+}

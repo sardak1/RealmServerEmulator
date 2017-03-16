@@ -1,0 +1,27 @@
+{
+  "messages": [
+    {
+      "name": "ack",
+      "type": "ack",
+      "fields": [
+        {"type": "packet_type", "name": "ack_command"},
+        {"type": "uint32", "name": "info", "default": 0}
+      ]
+    },
+    {
+      "name": "nak",
+      "type": "nak",
+      "fields": [
+        {"type": "packet_type", "name": "nak_command"},
+        {"type": "uint32", "name": "info", "default": 10000}
+      ]
+    },
+    {
+      "name": "ack-connect",
+      "base": "ack",
+      "fields": [
+        {"name": "ack_command", "default": "connect"}
+      ]
+    }
+  ]
+}

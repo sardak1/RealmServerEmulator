@@ -31,12 +31,21 @@ namespace network
             write_bytes(&value, sizeof(T));
         }
 
+        template<typename T, typename std::enable_if<std::is_integral<T>::value>::type* = nullptr>
+        T read()
+        {
+            T value;
+            read_bytes(&value, sizeof(T));
+            return value;
+        }
+
         uint8_t* data() { return data_.get(); }
         uint32_t capacity() const { return capacity_; }
         uint32_t size() const { return size_; }
 
     private:
         void write_bytes(const void* data, size_t size);
+        void read_bytes(void* data, size_t size);
 
         std::unique_ptr<uint8_t[]> data_;
         uint32_t capacity_;
